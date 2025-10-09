@@ -1,0 +1,91 @@
+# Project: SummerCat - Interactive Portfolio Hub
+
+## Project Overview
+SummerCat is a 2D top-down tile-based game-style portfolio website where users control a character to explore different web projects. Each building in the game world serves as a portal to different subdomain projects (e.g., pokeapple.summer-cat.com, portfolio.summer-cat.com).
+
+## Tech Stack
+- **Frontend**: Next.js 14+ (App Router), TypeScript, Tailwind CSS
+- **Game Engine**: Phaser 3
+- **Backend/Auth**: Supabase (Authentication, PostgreSQL Database)
+- **Deployment**: Vercel
+- **Domain Structure**: summer-cat.com (main), with subdomains for each project
+
+## Key Features
+1. 2D top-down tile-based game world
+2. Character movement and building interactions
+3. Portal system to navigate to subdomain projects
+4. User authentication (login/logout)
+5. Save game progress and user data
+6. Responsive design with game scaling
+
+## Project Structure
+- `/src/app` - Next.js app router pages
+- `/src/components` - React components (UI and game wrapper)
+- `/src/game` - Phaser 3 game logic (scenes, entities, utils)
+- `/src/lib` - Utility libraries (Supabase client, helpers)
+- `/src/hooks` - Custom React hooks
+- `/public/assets` - Game assets (sprites, tilesets, maps)
+
+## Development Guidelines
+
+### Code Style
+- Use TypeScript strict mode
+- Use functional components with hooks
+- Prefer named exports for components
+- Use arrow functions for components
+- Follow ESLint and Prettier configurations
+
+### Naming Conventions
+- Components: PascalCase (e.g., `GameCanvas.tsx`)
+- Files: kebab-case for utilities (e.g., `collision-helper.ts`)
+- Game classes: PascalCase (e.g., `Player.ts`, `MainScene.ts`)
+- Hooks: camelCase with 'use' prefix (e.g., `useAuth.ts`)
+- Constants: UPPER_SNAKE_CASE
+
+### Phaser Integration
+- Always use `'use client'` directive for Phaser components
+- Initialize Phaser only on client-side with proper checks
+- Clean up game instances in useEffect cleanup
+- Load assets from `/public/assets`
+- Use dynamic imports for Phaser to avoid SSR issues
+
+### Supabase Integration
+- Store credentials in `.env.local`
+- Use Row Level Security (RLS) for database tables
+- Implement auth state listeners in custom hooks
+- Handle authentication errors gracefully
+
+### Performance
+- Optimize sprite atlases and tilesets
+- Implement lazy loading for game scenes
+- Use Next.js Image component for static images
+- Minimize bundle size with tree-shaking
+
+### File Organization
+- Group related files by feature/domain
+- Keep game logic separate from React components
+- Centralize configuration in config files
+- Use barrel exports (index.ts) for cleaner imports
+
+## Database Schema (Supabase)
+```sql
+-- Users table (managed by Supabase Auth)
+
+-- Game progress table
+CREATE TABLE user_progress (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id),
+  position_x FLOAT,
+  position_y FLOAT,
+  visited_buildings TEXT[],
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Visitor logs
+CREATE TABLE visitor_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id),
+  visited_at TIMESTAMP DEFAULT NOW(),
+  session_duration INTEGER
+);  
