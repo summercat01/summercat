@@ -48,7 +48,13 @@ export class Player {
       velocity.normalize().scale(PLAYER_SPEED);
     }
 
-    this.sprite.body.setVelocity(velocity.x, velocity.y);
+    const body = this.sprite.body as PhaserType.Physics.Arcade.Body | null;
+
+    if (!body) {
+      return;
+    }
+
+    body.setVelocity(velocity.x, velocity.y);
   }
 
   destroy() {
